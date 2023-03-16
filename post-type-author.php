@@ -20,16 +20,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Initialize the plugin
- */
-function init() {
-	add_action( 'admin_init', __NAMESPACE__ . '\register_settings' );
-	add_action( 'save_post', __NAMESPACE__ . '\set_post_author', 10, 2 );
-}
-
-add_action( 'plugins_loaded', __NAMESPACE__ . '\init' );
-
-/**
  * Register the plugin settings
  */
 function register_settings() {
@@ -62,10 +52,15 @@ function register_settings() {
 		register_setting(
 			'writing',
 			"post_type_author_{$post_type->name}",
-			'absint'
+			array(
+				'type'              => 'integer',
+				'sanitize_callback' => 'absint',
+			)
 		);
 	}
 }
+
+add_action( 'admin_init', __NAMESPACE__ . '\register_settings' );
 
 /**
  * Settings section callback
@@ -151,7 +146,6 @@ function highlight_settings_section() {
 }
 
 add_action( 'admin_footer', __NAMESPACE__ . '\highlight_settings_section' );
-
 
 /**
  * Set the post author based on the default author for the post type
