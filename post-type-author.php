@@ -78,7 +78,7 @@ function settings_section_callback() {
 function settings_field_callback( $args ) {
 	$post_type         = $args['post_type'];
 	$default_author_id = get_option( "post_type_author_{$post_type->name}" );
-	$users             = get_users();
+	$users             = get_users( array( 'capability' => 'edit_posts' ) );
 
 	echo '<select name="post_type_author_' . esc_attr( $post_type->name ) . '">';
 	echo '<option value="">' . esc_html( __( 'No author selected', 'post-type-author' ) ) . '</option>';
