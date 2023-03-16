@@ -37,7 +37,12 @@ function register_settings() {
 		'post_type_author_settings_section',
 		__( 'Post Type Author Settings', 'post-type-author' ),
 		__NAMESPACE__ . '\settings_section_callback',
-		'writing'
+		'writing',
+		array(
+			// Add an anchor for the plugin action link to land on.
+			'before_section' => '<section id="post-type-author">',
+			'after_section'  => '</section>',
+		)
 	);
 
 	$post_types = get_post_types( array( 'public' => true ), 'objects' );
@@ -86,6 +91,67 @@ function settings_field_callback( $args ) {
 
 	echo '</select>';
 }
+
+/**
+ * Add a plugin action link to the settings page.
+ */
+function plugin_action_links( $links ) {
+	$links[] = '<a href="' . admin_url( 'options-writing.php#post-type-author' ) . '">' . __( 'Settings', 'post-type-author' ) . '</a>';
+	return $links;
+}
+
+add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), __NAMESPACE__ . '\plugin_action_links' );
+
+/**
+ * Flash an animated highlight around the post type author settings section on
+ * options-writing screen if window.hash is #post-type-author.
+ */
+function highlight_settings_section() {
+	$screen = get_current_screen();
+
+	if ( 'options-writing' !== $screen->id ) {
+		return;
+	}
+
+	?>
+	<script>
+		( function() {
+			var hash = window.location.hash;
+
+			if ( '#post-type-author' === hash ) {
+				var section = document.querySelector( '#post-type-author' );
+
+				if ( section ) {
+					section.classList.add( 'flash' );
+				}
+			}
+		} )();
+	</script>
+	<style>
+		#post-type-author.flash {
+			animation: 0.5s ease-in-out 3 flash;
+		}
+
+		@keyframes flash {
+			0% {
+				background-color: transparent;
+				outline: 0px solid transparent;
+			}
+			50% {
+				background-color: #f0f6fc;
+				outline: 10px solid #f0f6fc;
+			}
+			100% {
+				background-color: transparent;
+				outline: 0px solid transparent;
+			}
+		}
+	</style>
+	<?php
+}
+
+add_action( 'admin_footer', __NAMESPACE__ . '\highlight_settings_section' );
+
 
 /**
  * Set the post author based on the default author for the post type
