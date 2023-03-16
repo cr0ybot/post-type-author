@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Register the plugin settings
+ * Register the plugin settings.
  */
 function register_settings() {
 	add_settings_section(
@@ -40,6 +40,7 @@ function register_settings() {
 	foreach ( $post_types as $post_type ) {
 		add_settings_field(
 			"post_type_author_{$post_type->name}",
+			// translators: %s is the post type label.
 			sprintf( __( 'Default author for %s', 'post-type-author' ), $post_type->label ),
 			__NAMESPACE__ . '\settings_field_callback',
 			'writing',
@@ -63,14 +64,16 @@ function register_settings() {
 add_action( 'admin_init', __NAMESPACE__ . '\register_settings' );
 
 /**
- * Settings section callback
+ * Settings section callback.
  */
 function settings_section_callback() {
-	echo '<p>' . __( 'Choose a default author for any post type below:', 'post-type-author' ) . '</p>';
+	echo '<p>' . esc_html( __( 'Choose a default author for any post type below:', 'post-type-author' ) ) . '</p>';
 }
 
 /**
- * Settings field callback
+ * Settings field callback.
+ *
+ * @param array $args An array of arguments.
  */
 function settings_field_callback( $args ) {
 	$post_type         = $args['post_type'];
@@ -78,7 +81,7 @@ function settings_field_callback( $args ) {
 	$users             = get_users();
 
 	echo '<select name="post_type_author_' . esc_attr( $post_type->name ) . '">';
-	echo '<option value="">' . __( 'No author selected', 'post-type-author' ) . '</option>';
+	echo '<option value="">' . esc_html( __( 'No author selected', 'post-type-author' ) ) . '</option>';
 
 	foreach ( $users as $user ) {
 		echo '<option value="' . esc_attr( $user->ID ) . '"' . selected( $default_author_id, $user->ID, false ) . '>' . esc_html( $user->display_name ) . '</option>';
@@ -89,6 +92,8 @@ function settings_field_callback( $args ) {
 
 /**
  * Add a plugin action link to the settings page.
+ *
+ * @param array $links An array of plugin action links.
  */
 function plugin_action_links( $links ) {
 	$links[] = '<a href="' . admin_url( 'options-writing.php#post-type-author' ) . '">' . __( 'Settings', 'post-type-author' ) . '</a>';
@@ -148,7 +153,10 @@ function highlight_settings_section() {
 add_action( 'admin_footer', __NAMESPACE__ . '\highlight_settings_section' );
 
 /**
- * Set the post author based on the default author for the post type
+ * Set the post author based on the default author for the post type.
+ *
+ * @param int     $post_id The post ID.
+ * @param WP_Post $post    The post object.
  */
 function set_post_author( $post_id, $post ) {
 	if ( 'revision' === $post->post_type ) {
