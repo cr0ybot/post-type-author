@@ -2,8 +2,10 @@
 /**
  * Plugin Name: Post Type Author
  * Plugin URI: https://github.com/cr0ybot/post-type-author
- * Description: Forces selected post types to always have the same chosen author.
+ * Description: Force selected post types to always have the same chosen author.
  * Version: 0.1.0
+ * Requires at least: 4.7
+ * Requires PHP: 5.6
  * Author: Cory Hughart
  * Author URI: https://coryhughart.com
  * License: GPL-3.0-or-later
